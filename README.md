@@ -1,2 +1,2 @@
-# ai-identity
+# AI-Identity
 AI-powered multilingual immigration assistant

@@ -1,7 +1,12 @@
+from pathlib import Path
+
 import chromadb
 
-# Open the same cabinet we filled in store.py
-client = chromadb.PersistentClient(path="./chroma_db")
+_RAG_DIR = Path(__file__).resolve().parent
+_CHROMA_PATH = _RAG_DIR / "chroma_db"
+
+# Open the same cabinet we filled in store.py (path works no matter where the app is started)
+client = chromadb.PersistentClient(path=str(_CHROMA_PATH))
 collection = client.get_or_create_collection(name="immigration_docs")
 
 def retrieve_context(user_question, n_results=3):

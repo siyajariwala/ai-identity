@@ -1,10 +1,17 @@
+from pathlib import Path
+
 from pypdf import PdfReader
+
+from paths import I765_PDF
+
+
 def extract_text(pdf_path):
     reader = PdfReader(pdf_path)
     full_text = ""
     for page in reader.pages:
-        full_text += page.extract_text()
+        full_text += page.extract_text() or ""
     return full_text
+
 
 def chunk_text(text, chunk_size=500, overlap=50):
     chunks = []
@@ -21,9 +28,14 @@ def chunk_text(text, chunk_size=500, overlap=50):
         start = end - overlap
     return chunks
 
-text = extract_text("/Users/siyajariwala/Desktop/ai-identity/ai-identity/rag/i-765instr.pdf")
-chunks = chunk_text(text)       #split the text into overlapping chunks 
 
-print(f"Total chunks created: {len(chunks)}")
-print(f"\nExample chunk 1:\n{chunks[0]}")
-print(f"\nExample chunk 2:\n{chunks[1]}")
+if __name__ == "__main__":
+    pdf = Path(I765_PDF)
+    if not pdf.is_file():
+        raise SystemExit(f"Missing PDF: {pdf}")
+    text = extract_text(str(pdf))
+    chunks = chunk_text(text)  # split the text into overlapping chunks
+
+    print(f"Total chunks created: {len(chunks)}")
+    print(f"\nExample chunk 1:\n{chunks[0]}")
+    print(f"\nExample chunk 2:\n{chunks[1]}")

@@ -1,121 +1,101 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// App.jsx — root component that wires everything together.
+// Manages top-level state: splash screen, sidebar open/close, language selection.
+// Passes the right props and callbacks down to each component.
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useState } from "react";
+import SplashScreen from "./components/SplashScreen";
+import TopBar from "./components/TopBar";
+import ChatWindow from "./components/ChatWindow";
+import InputBar from "./components/InputBar";
+import Sidebar from "./components/Sidebar";
+import { useChat } from "./hooks/useChat";
+import { useLanguage } from "./hooks/useLanguage";
+import { useMicrophone } from "./hooks/useMicrophone";
+import { t } from "./i18n";
+import "./App.css";
+
+export default function App() {
+  // Show splash screen on first load only — new chat does NOT re-trigger this
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Sidebar open/close state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Language selection — shared across chat, mic, and UI text
+  const { language, setLanguage } = useLanguage();
+
+  // Chat state, send function, and reset for new conversations
+  const { messages, loading, send, reset } = useChat(language);
+
+  // Microphone recording and Whisper transcription
+  const { isRecording, transcript, start, stop } = useMicrophone(language);
+
+  const hasMessages = messages.length > 0 || loading;
+
+  // Toggle mic: start if idle, stop if already recording
+  function handleMicToggle() {
+    isRecording ? stop() : start();
+  }
+
+  // Clear the conversation without reloading — splash screen does not show again
+  function handleNewChat() {
+    reset();
+    setSidebarOpen(false);
+  }
+
+  // Translate helper pre-bound to the current language
+  function translate(key) {
+    return t(language, key);
+  }
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onNewChat={handleNewChat}
+      />
 
-      <div className="ticks"></div>
+      <TopBar
+        onMenuClick={() => setSidebarOpen(true)}
+        language={language}
+        onLanguageChange={setLanguage}
+      />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* When no messages: show centered empty state with input bar below the prompt.
+          When chatting: show the scrollable message thread instead. */}
+      {hasMessages ? (
+        <>
+          <ChatWindow messages={messages} loading={loading} />
+          <InputBar
+            onSend={send}
+            onMicToggle={handleMicToggle}
+            isRecording={isRecording}
+            transcript={transcript}
+            t={translate}
+            centered={false}
+          />
+        </>
+      ) : (
+        <div className="empty-state">
+          <div className="empty-state-text">
+            <p className="empty-title">{translate("emptyTitle")}</p>
+            <p className="empty-subtitle">{translate("emptySubtitle")}</p>
+          </div>
+          <InputBar
+            onSend={send}
+            onMicToggle={handleMicToggle}
+            isRecording={isRecording}
+            transcript={transcript}
+            t={translate}
+            centered={true}
+          />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      )}
+    </div>
+  );
 }
-
-export default App

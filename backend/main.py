@@ -2,7 +2,7 @@ import os
 from typing import Literal
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from groq import Groq
@@ -216,6 +216,42 @@ def chat(body: ChatRequest) -> ChatResponse:
         raise HTTPException(status_code=502, detail="Empty model response")
 
     return ChatResponse(answer=answer.strip(), model=completion.model)
+
+
+class TranscribeResponse(BaseModel):
+    text: str
+
+
+@app.post(
+    "/api/transcribe",
+    response_model=TranscribeResponse,
+    tags=["Immigration assistant"],
+    summary="Transcribe spoken audio to text",
+)
+async def transcribe(
+    file: UploadFile = File(..., description="Audio file recorded in the browser (webm/mp4/wav)"),
+    language: str = Form(default="en", description="BCP-47 language code to guide Whisper transcription"),
+) -> TranscribeResponse:
+    # Read the raw audio bytes from the uploaded file
+    audio_bytes = await file.read()
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="Audio file is empty.")
+
+    client = _groq_client()
+
+    try:
+        # Send audio to Groq's Whisper endpoint for transcription
+        # The filename extension hints at the format; webm is what browsers produce by default
+        transcription = client.audio.transcriptions.create(
+            model="whisper-large-v3",
+            file=(file.filename or "recording.webm", audio_bytes),
+            language=language,
+            response_format="text",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
+
+    return TranscribeResponse(text=transcription.strip())
 
 
 # Run from repo root: uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000

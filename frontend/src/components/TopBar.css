@@ -1,0 +1,122 @@
+/* Fixed header bar across the top of the screen */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 100;
+}
+
+/* Hamburger icon button — three stacked lines */
+.topbar-menu-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #000;
+  border-radius: 2px;
+}
+
+/* Centered logo — never changes regardless of language */
+.topbar-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #000;
+}
+
+/* Wrapper for the circle button + dropdown */
+.lang-switcher {
+  position: relative;
+}
+
+/* Circle button showing the current language abbreviation */
+.lang-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  background: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  transition: background 0.15s;
+}
+
+.lang-circle:hover {
+  background: #f0f0f0;
+}
+
+/* Dropdown panel — floats below the circle, right-aligned */
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  min-width: 140px;
+  z-index: 200;
+}
+
+/* Each language option row */
+.lang-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: #000;
+}
+
+.lang-option:hover {
+  background: #f5f5f5;
+}
+
+/* Highlight the currently selected language */
+.lang-option.active {
+  font-weight: 600;
+}
+
+.lang-option-abbr {
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 24px;
+  color: #555;
+}
+
+.lang-option-label {
+  font-size: 0.9rem;
+}

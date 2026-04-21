@@ -1,0 +1,26 @@
+/* Global base styles — resets and typography only */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  color: #000;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove default button and input styles so components control their own look */
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}

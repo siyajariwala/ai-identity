@@ -8,6 +8,17 @@ from fastapi.responses import RedirectResponse
 from groq import Groq
 from pydantic import BaseModel, Field
 
+from backend.bay_area_resources import (
+    BAY_AREA_LEGAL_AID_ORGS,
+    LEGAL_AID_DISCLAIMER,
+    LegalAidOrganization,
+)
+from backend.checklists import (
+    ChecklistItem,
+    DISCLAIMER as CHECKLIST_DISCLAIMER,
+    VisaType,
+    get_checklist,
+)
 from backend.prompts import IMMIGRATION_ASSISTANT_SYSTEM_PROMPT
 
 load_dotenv()
@@ -44,7 +55,9 @@ app = FastAPI(
         "Target languages: **English, Spanish, Mandarin, Tagalog, Hindi, Arabic**. "
         "Form scope (MVP): **I-765**, **I-485**, **I-821D**. "
         "This is **not** a medical app. "
-        "**POST /api/chat** is the main endpoint; set `use_rag` when Chroma retrieval is populated."
+        "**POST /api/chat** is the main endpoint; set `use_rag` when Chroma retrieval is populated. "
+        "**POST /checklist** returns a curated document checklist by visa/status code. "
+        "**GET /resources** lists Bay Area nonprofit legal aid organizations."
     ),
     version="0.1.0",
 )
@@ -79,6 +92,27 @@ class ChatResponse(BaseModel):
     model: str
 
 
+class ChecklistRequest(BaseModel):
+    visa_type: VisaType = Field(
+        ...,
+        description="Machine-readable visa/status path; see OpenAPI enum for valid values.",
+    )
+
+
+class ChecklistResponse(BaseModel):
+    visa_type: VisaType
+    display_name: str
+    summary: str
+    items: list[ChecklistItem]
+    disclaimer: str
+
+
+class ResourcesResponse(BaseModel):
+    organizations: list[LegalAidOrganization]
+    count: int
+    disclaimer: str
+
+
 @app.get("/", include_in_schema=False)
 def root() -> RedirectResponse:
     """Browser default URL has no handler otherwise; send people to the API docs."""
@@ -93,6 +127,46 @@ def root() -> RedirectResponse:
 )
 def health() -> dict[str, Literal["ok"]]:
     return {"status": "ok"}
+
+
+@app.post(
+    "/checklist",
+    response_model=ChecklistResponse,
+    tags=["Immigration assistant"],
+    summary="Personalized document checklist",
+    description=(
+        "Returns a curated checklist of commonly required documents for the selected visa/status path. "
+        "Educational only—not legal advice; users should verify against official USCIS instructions."
+    ),
+)
+def checklist(body: ChecklistRequest) -> ChecklistResponse:
+    bundle = get_checklist(body.visa_type)
+    return ChecklistResponse(
+        visa_type=bundle.visa_type,
+        display_name=bundle.display_name,
+        summary=bundle.summary,
+        items=bundle.items,
+        disclaimer=CHECKLIST_DISCLAIMER,
+    )
+
+
+@app.get(
+    "/resources",
+    response_model=ResourcesResponse,
+    tags=["Immigration assistant"],
+    summary="Bay Area legal aid organizations",
+    description=(
+        "Free and low-cost nonprofit legal aid organizations serving the San Francisco Bay Area. "
+        "Verify intake hours and eligibility on each organization's website."
+    ),
+)
+def resources() -> ResourcesResponse:
+    orgs = BAY_AREA_LEGAL_AID_ORGS
+    return ResourcesResponse(
+        organizations=orgs,
+        count=len(orgs),
+        disclaimer=LEGAL_AID_DISCLAIMER,
+    )
 
 
 @app.post(

@@ -7,16 +7,18 @@
 // transcript: text returned from Whisper — auto-fills the input when it arrives
 // t: translation function for placeholder text
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./InputBar.css";
 
 export default function InputBar({ onSend, onMicToggle, isRecording, transcript, t, centered }) {
   const [text, setText] = useState("");
+  const [lastTranscript, setLastTranscript] = useState("");
 
-  // When Whisper returns a transcript, populate the input automatically
-  useEffect(() => {
-    if (transcript) setText(transcript);
-  }, [transcript]);
+  // When Whisper returns a new transcript, populate the input automatically.
+  if (transcript && transcript !== lastTranscript) {
+    setLastTranscript(transcript);
+    setText(transcript);
+  }
 
   function handleSend() {
     const trimmed = text.trim();

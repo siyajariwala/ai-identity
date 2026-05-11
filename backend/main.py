@@ -175,30 +175,68 @@ def resources() -> ResourcesResponse:
     tags=["Immigration assistant"],
     summary="Ask the immigration assistant",
 )
+@app.post(
+    "/api/chat",
+    response_model=ChatResponse,
+    tags=["Immigration assistant"],
+    summary="Ask the immigration assistant",
+)
 def chat(body: ChatRequest) -> ChatResponse:
     client = _groq_client()
 
+    # Detect checklist questions and inject structured data
+    checklist_keywords = ["documents", "checklist", "what do i need", "paperwork", "what documents"]
+    visa_keyword_map = {
+        "stem opt": VisaType.F1_STEM_OPT,
+        "opt": VisaType.F1_OPT,
+        "h1b": VisaType.H1B,
+        "h-1b": VisaType.H1B,
+        "daca renewal": VisaType.DACA_RENEWAL,
+        "daca": VisaType.DACA_INITIAL,
+        "i-485": VisaType.FAMILY_ADJUSTMENT_I485,
+        "green card": VisaType.FAMILY_ADJUSTMENT_I485,
+        "asylum": VisaType.ASYLUM_PENDING_EAD,
+        "n-400": VisaType.NATURALIZATION_N400,
+        "naturalization": VisaType.NATURALIZATION_N400,
+        "j-1": VisaType.J1,
+        "j1": VisaType.J1,
+    }
+
+    question_lower = body.question.lower()
+    checklist_context = None
+
+    if any(kw in question_lower for kw in checklist_keywords):
+        for keyword, visa_type in visa_keyword_map.items():
+            if keyword in question_lower:
+                bundle = get_checklist(visa_type)
+                checklist_context = f"Visa type: {bundle.display_name}\n{bundle.summary}\n"
+                for item in bundle.items:
+                    checklist_context += f"- {item.title}: {item.detail}\n"
+                break
+
     user_content = body.question.strip()
     if body.language:
-        user_content = (
-            f"{user_content}\n\n(Reply in language code: {body.language}.)"
-        )
+        user_content = f"{user_content}\n\n(Reply in language code: {body.language}.)"
 
     messages: list[dict[str, str]] = [
         {"role": "system", "content": IMMIGRATION_ASSISTANT_SYSTEM_PROMPT},
     ]
 
+    if checklist_context:
+        messages.append({
+            "role": "system",
+            "content": f"Use this official checklist as your answer source:\n\n{checklist_context}"
+        })
+
     if body.use_rag:
         context = _optional_rag_context(body.question)
         if context:
-            messages.append(
-                {
-                    "role": "system",
-                    "content": "Use the following excerpts from official-style instructions as grounding. "
-                    "If they conflict with the user's situation or seem incomplete, say so and do not over-claim.\n\n"
-                    f"{context}",
-                }
-            )
+            messages.append({
+                "role": "system",
+                "content": "Use the following excerpts from official-style instructions as grounding. "
+                "If they conflict with the user's situation or seem incomplete, say so and do not over-claim.\n\n"
+                f"{context}",
+            })
 
     messages.append({"role": "user", "content": user_content})
 

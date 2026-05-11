@@ -26,14 +26,15 @@
 
 /* User bubble — dark background, white text */
 .bubble-wrapper.user .bubble {
-  background: #000;
-  color: #fff;
+  background: linear-gradient(135deg, #6d3dd2, #7a4f00);
+  color: #fff7df;
   border-bottom-right-radius: 4px;
 }
 
 /* Assistant bubble — light grey background, dark text */
 .bubble-wrapper.assistant .bubble {
-  background: #f0f0f0;
-  color: #000;
+  background: rgba(31, 13, 51, 0.78);
+  color: #fff7df;
+  border: 1px solid rgba(255, 220, 97, 0.16);
   border-bottom-left-radius: 4px;
 }

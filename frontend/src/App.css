@@ -1,10 +1,71 @@
 /* App shell — takes up the full screen and stacks vertically */
 .app {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   height: 100dvh; /* dvh accounts for mobile browser chrome (address bar) */
   overflow: hidden;
-  background: #fff;
+  background:
+    radial-gradient(ellipse at 20% 18%, rgba(92, 30, 202, 0.78), transparent 42%),
+    radial-gradient(ellipse at 78% 22%, rgba(191, 132, 0, 0.74), transparent 40%),
+    radial-gradient(ellipse at 82% 84%, rgba(114, 43, 176, 0.68), transparent 46%),
+    radial-gradient(ellipse at 18% 80%, rgba(143, 99, 10, 0.66), transparent 42%),
+    linear-gradient(125deg, #210d38 0%, #543805 46%, #2d1249 100%);
+  background-size: 135% 135%, 140% 140%, 145% 145%, 150% 150%, 100% 100%;
+  animation: app-aura 18s ease-in-out infinite alternate;
+}
+
+.app::before {
+  content: "";
+  position: fixed;
+  inset: -16%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from 120deg at 52% 50%,
+      rgba(95, 35, 205, 0.34),
+      rgba(190, 132, 11, 0.4),
+      rgba(112, 42, 178, 0.36),
+      rgba(147, 103, 17, 0.36),
+      rgba(95, 35, 205, 0.34)
+    );
+  filter: blur(42px) saturate(1.14);
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0) scale(1);
+  animation: app-aura-flow 24s ease-in-out infinite alternate;
+}
+
+@keyframes app-aura {
+  0% {
+    background-position: 8% 12%, 92% 12%, 80% 88%, 16% 82%, center;
+  }
+
+  50% {
+    background-position: 24% 8%, 72% 34%, 92% 72%, 28% 94%, center;
+  }
+
+  100% {
+    background-position: 40% 24%, 58% 12%, 70% 92%, 8% 66%, center;
+  }
+}
+
+@keyframes app-aura-flow {
+  0% {
+    transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1.02);
+  }
+
+  100% {
+    transform: translate3d(3%, 2%, 0) rotate(18deg) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app,
+  .app::before {
+    animation: none;
+  }
 }
 
 /* Centered layout shown before the first message is sent.
@@ -26,12 +87,12 @@
 .empty-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #000;
+  color: #fff7df;
   margin: 0 0 8px;
 }
 
 .empty-subtitle {
   font-size: 0.95rem;
-  color: #999;
+  color: rgba(244, 220, 255, 0.74);
   margin: 0;
 }

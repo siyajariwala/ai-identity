@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #999;
+  color: rgba(244, 220, 255, 0.72);
   text-align: center;
   padding: 24px;
 }
@@ -30,7 +30,7 @@
 .chat-empty p:first-child {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #555;
+  color: #fff7df;
 }
 
 /* Typing indicator — three animated dots while AI is responding */
@@ -45,7 +45,7 @@
   display: block;
   width: 8px;
   height: 8px;
-  background: #999;
+  background: #d9a11d;
   border-radius: 50%;
   animation: bounce 1.2s infinite ease-in-out;
 }

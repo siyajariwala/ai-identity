@@ -5,8 +5,11 @@
   padding: 72px 0 80px; /* top clears the TopBar, bottom clears the InputBar */
   display: flex;
   flex-direction: column;
-  /* Anchor messages to the bottom so new ones appear from the bottom up */
-  justify-content: flex-end;
+}
+
+/* Pushes messages to the bottom when few exist; collapses when chat is full so scrolling works */
+.chat-spacer {
+  flex: 1;
 }
 
 /* Centered prompt shown before any messages exist */

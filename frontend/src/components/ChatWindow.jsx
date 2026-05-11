@@ -26,6 +26,9 @@ export default function ChatWindow({ messages, loading }) {
         </div>
       )}
 
+      {/* Spacer pushes messages to the bottom; collapses once content overflows so scrolling kicks in */}
+      <div className="chat-spacer" />
+
       {/* Message thread */}
       {messages.map((msg, i) => (
         <MessageBubble key={i} role={msg.role} text={msg.text} />

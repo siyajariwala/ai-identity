@@ -28,7 +28,7 @@ export default function App() {
   const { messages, loading, send, reset } = useChat(language);
 
   // Microphone recording and Whisper transcription
-  const { isRecording, transcript, start, stop } = useMicrophone(language);
+  const { isRecording, transcript, interimTranscript, start, stop } = useMicrophone(language);
 
   const hasMessages = messages.length > 0 || loading;
 
@@ -76,6 +76,7 @@ export default function App() {
             onMicToggle={handleMicToggle}
             isRecording={isRecording}
             transcript={transcript}
+            interimTranscript={interimTranscript}
             t={translate}
             centered={false}
           />
@@ -91,6 +92,7 @@ export default function App() {
             onMicToggle={handleMicToggle}
             isRecording={isRecording}
             transcript={transcript}
+            interimTranscript={interimTranscript}
             t={translate}
             centered={true}
           />

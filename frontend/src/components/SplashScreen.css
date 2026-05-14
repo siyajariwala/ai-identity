@@ -1,0 +1,84 @@
+/* Full screen centered container for the splash logo */
+.splash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 24% 22%, rgba(92, 30, 202, 0.82), transparent 44%),
+    radial-gradient(ellipse at 80% 26%, rgba(190, 131, 0, 0.78), transparent 40%),
+    radial-gradient(ellipse at 62% 84%, rgba(116, 43, 178, 0.7), transparent 46%),
+    linear-gradient(135deg, #210d38 0%, #543805 48%, #2d1249 100%);
+  background-size: 140% 140%;
+  animation: splash-aura 16s ease-in-out infinite alternate;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+/* Fade in phase */
+.splash.in {
+  opacity: 1;
+}
+
+/* Hold phase — stay fully visible */
+.splash.hold {
+  opacity: 1;
+}
+
+/* Fade out phase */
+.splash.out {
+  opacity: 0;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.splash-logo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff7df;
+  text-shadow: 0 1px 24px rgba(255, 194, 51, 0.32);
+  margin: 0;
+}
+
+.splash-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(244, 220, 255, 0.65);
+  letter-spacing: 0.01em;
+  text-align: center;
+  animation: subtitle-pop 0.3s ease forwards;
+}
+
+@keyframes subtitle-pop {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-aura {
+  from {
+    background-position: 12% 18%, 88% 16%, 64% 88%, center;
+  }
+
+  to {
+    background-position: 32% 8%, 68% 36%, 82% 72%, center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash {
+    animation: none;
+  }
+}

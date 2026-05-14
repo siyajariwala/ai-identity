@@ -1,0 +1,321 @@
+/* Dark overlay that appears behind the open sidebar */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 6, 28, 0.56);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 150;
+}
+
+/* Sidebar panel — slides in from the left */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  background: rgba(28, 11, 48, 0.9);
+  border-right: 1px solid rgba(255, 204, 64, 0.24);
+  box-shadow: 16px 0 40px rgba(14, 4, 28, 0.42);
+  backdrop-filter: blur(22px) saturate(1.22);
+  -webkit-backdrop-filter: blur(22px) saturate(1.22);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+
+/* Slide in when open */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* Close (✕) button in the top corner */
+.sidebar-close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  color: #fff7df;
+  margin-bottom: 16px;
+}
+
+/* New Chat button */
+.sidebar-new-chat {
+  background: #7a4f00;
+  color: #fff7df;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+
+.sidebar-new-chat::after {
+  content: "";
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 220, 97, 0.18), transparent);
+  transition: left 0.4s ease;
+}
+
+.sidebar-new-chat:hover {
+  background: #93650a;
+  box-shadow: 0 0 18px rgba(255, 160, 30, 0.3);
+  transform: translateY(-1px);
+}
+
+.sidebar-new-chat:hover::after {
+  left: 140%;
+}
+
+.sidebar-new-chat:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 204, 64, 0.22);
+  margin: 16px 0;
+}
+
+/* Placeholder message for the account/save feature */
+.sidebar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: rgba(244, 220, 255, 0.72);
+  padding: 16px;
+}
+
+.sidebar-lock {
+  font-size: 1.5rem;
+}
+
+.sidebar-placeholder p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Landing-page sidebar — login/signup only, no chat history */
+.sidebar-landing-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 0;
+}
+
+.sidebar-save-cta {
+  font-size: 0.82rem;
+  color: rgba(244, 220, 255, 0.5);
+  line-height: 1.5;
+  margin: 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 204, 64, 0.05);
+  border: 1px solid rgba(255, 204, 64, 0.12);
+}
+
+/* Auth section — unauthenticated */
+.sidebar-auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: rgba(244, 220, 255, 0.72);
+  padding: 12px 8px;
+}
+
+.sidebar-auth p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.sidebar-auth-btns {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.sidebar-btn-login,
+.sidebar-btn-signup {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: none;
+}
+
+.sidebar-btn-login {
+  background: rgba(255, 204, 64, 0.12);
+  border: 1px solid rgba(255, 204, 64, 0.35);
+  color: #ffcc40;
+}
+.sidebar-btn-login:hover { opacity: 0.8; }
+
+.sidebar-btn-signup {
+  background: linear-gradient(135deg, #7a4f00, #b87d00);
+  color: #fff7df;
+}
+.sidebar-btn-signup:hover { opacity: 0.85; }
+
+/* Authenticated user row */
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: rgba(255, 204, 64, 0.07);
+  border: 1px solid rgba(255, 204, 64, 0.18);
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7a4f00, #b87d00);
+  color: #fff7df;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.sidebar-user-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff7df;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-email {
+  font-size: 0.75rem;
+  color: rgba(244, 220, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-logout {
+  background: none;
+  border: none;
+  color: rgba(244, 220, 255, 0.45);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.sidebar-logout:hover { color: #ffcc40; }
+
+/* Chat history list */
+.sidebar-history {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.sidebar-history-empty {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(244, 220, 255, 0.4);
+  text-align: center;
+  padding: 12px 8px;
+}
+
+@keyframes history-item-in {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sidebar-history-item {
+  position: relative;
+  padding: 9px 32px 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  border: 1px solid transparent;
+  animation: history-item-in 0.24s ease both;
+}
+
+.sidebar-history-item:nth-child(1)  { animation-delay:  0ms; }
+.sidebar-history-item:nth-child(2)  { animation-delay: 40ms; }
+.sidebar-history-item:nth-child(3)  { animation-delay: 80ms; }
+.sidebar-history-item:nth-child(4)  { animation-delay: 120ms; }
+.sidebar-history-item:nth-child(5)  { animation-delay: 160ms; }
+.sidebar-history-item:nth-child(6)  { animation-delay: 200ms; }
+.sidebar-history-item:nth-child(n+7){ animation-delay: 240ms; }
+
+.sidebar-history-item:hover {
+  background: rgba(255, 204, 64, 0.07);
+  border-color: rgba(255, 204, 64, 0.15);
+  transform: translateX(3px);
+}
+
+.sidebar-history-title {
+  font-size: 0.83rem;
+  color: #fff7df;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.sidebar-history-meta {
+  font-size: 0.72rem;
+  color: rgba(244, 220, 255, 0.4);
+  margin-top: 2px;
+}
+
+.sidebar-history-delete {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(244, 220, 255, 0.25);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+.sidebar-history-item:hover .sidebar-history-delete { opacity: 1; }
+.sidebar-history-delete:hover { color: #ff7eb3; }

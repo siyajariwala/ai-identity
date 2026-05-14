@@ -26,7 +26,10 @@
   border: none;
   cursor: pointer;
   padding: 4px;
+  transition: transform 0.18s;
 }
+.topbar-menu-btn:hover { transform: scale(1.12); }
+.topbar-menu-btn:active { transform: scale(0.92); }
 
 .hamburger-line {
   display: block;
@@ -34,9 +37,12 @@
   height: 2px;
   background: #fff7df;
   border-radius: 2px;
+  transition: width 0.22s ease, background 0.22s ease;
 }
+.topbar-menu-btn:hover .hamburger-line:nth-child(2) { width: 16px; }
+.topbar-menu-btn:hover .hamburger-line { background: #ffcc40; }
 
-/* Centered logo — never changes regardless of language */
+/* Centered logo — clicking returns to landing page */
 .topbar-logo {
   position: absolute;
   left: 50%;
@@ -45,6 +51,19 @@
   font-weight: 700;
   margin: 0;
   color: #fff7df;
+  cursor: pointer;
+  user-select: none;
+  animation: logo-shimmer 5s ease-in-out infinite;
+  transition: opacity 0.15s;
+}
+
+.topbar-logo:hover {
+  opacity: 0.78;
+}
+
+@keyframes logo-shimmer {
+  0%, 100% { text-shadow: 0 1px 10px rgba(255, 194, 51, 0.18); }
+  50%       { text-shadow: 0 1px 22px rgba(255, 194, 51, 0.65), 0 0 48px rgba(180, 100, 255, 0.2); }
 }
 
 /* Wrapper for the circle button + dropdown */
@@ -67,14 +86,20 @@
   align-items: center;
   justify-content: center;
   color: #fff7df;
-  transition: background 0.15s;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
 }
 
 .lang-circle:hover {
   background: rgba(80, 41, 118, 0.88);
+  transform: scale(1.1);
+  box-shadow: 0 0 14px rgba(255, 200, 60, 0.3);
 }
 
-/* Dropdown panel — floats below the circle, right-aligned */
+.lang-circle:active {
+  transform: scale(0.92);
+}
+
+/* Dropdown panel — slides down when opened */
 .lang-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -90,6 +115,13 @@
   padding: 4px 0;
   min-width: 140px;
   z-index: 200;
+  animation: dropdown-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: top right;
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* Each language option row */
@@ -104,10 +136,12 @@
   cursor: pointer;
   text-align: left;
   color: #fff7df;
+  transition: background 0.15s, padding-left 0.18s;
 }
 
 .lang-option:hover {
   background: rgba(120, 81, 10, 0.42);
+  padding-left: 18px;
 }
 
 /* Highlight the currently selected language */

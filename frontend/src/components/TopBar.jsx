@@ -15,7 +15,7 @@ const LANG_ABBR = {
   en: "EN", es: "ES", zh: "ZH", tl: "TL", hi: "HI", ar: "AR",
 };
 
-export default function TopBar({ onMenuClick, language, onLanguageChange }) {
+export default function TopBar({ onMenuClick, onLogoClick, language, onLanguageChange }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -44,8 +44,10 @@ export default function TopBar({ onMenuClick, language, onLanguageChange }) {
         <span className="hamburger-line" />
       </button>
 
-      {/* App logo centered in the header — language changes do not affect this */}
-      <h1 className="topbar-logo">AIdentity</h1>
+      {/* App logo — clicking returns to the landing page */}
+      <h1 className="topbar-logo" onClick={onLogoClick} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && onLogoClick?.()}>
+        AIdentity
+      </h1>
 
       {/* Language switcher — circle button with current language abbreviation */}
       <div className="lang-switcher" ref={dropdownRef}>

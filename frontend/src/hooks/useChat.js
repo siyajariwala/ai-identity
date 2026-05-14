@@ -27,12 +27,17 @@ export function useChat(language) {
     }
   }
 
-  // Clears the conversation without reloading the page
   function reset() {
     setMessages([]);
     setLoading(false);
     setError(null);
   }
 
-  return { messages, loading, error, send, reset };
+  function restore(savedMessages) {
+    setMessages(savedMessages);
+    setLoading(false);
+    setError(null);
+  }
+
+  return { messages, loading, error, send, reset, restore };
 }

@@ -1,32 +1,50 @@
-// SplashScreen — shown once when the app first loads.
-// Fades the "AIdentity" logo in, holds it, then fades it out.
-// Calls onFinish() when the animation is done so App.jsx can switch to the chat screen.
-
 import { useEffect, useState } from "react";
 import "./SplashScreen.css";
 
+const SUBTITLES = [
+  "Understand your immigration documents, in your language",
+  "Entiende tus documentos de inmigración, en tu idioma",
+  "用您的语言了解您的移民文件",
+  "Unawain ang iyong mga dokumento sa imigrasyon, sa iyong wika",
+  "अपनी भाषा में अपने इमिग्रेशन दस्तावेज़ समझें",
+  "افهم وثائق الهجرة الخاصة بك، بلغتك",
+];
+
+const HOLD_MS = 600;    // fade-in duration
+const PER_LANG_MS = 480; // time each language is shown
+const FADE_OUT_MS = 800;
+
 export default function SplashScreen({ onFinish }) {
-  // Controls which phase of the animation we're in: "in", "hold", or "out"
   const [phase, setPhase] = useState("in");
+  const [langIndex, setLangIndex] = useState(0);
 
   useEffect(() => {
-    // Fade in for 800ms
-    const holdTimer = setTimeout(() => setPhase("hold"), 800);
-    // Hold for 1.5s after fade-in
-    const outTimer = setTimeout(() => setPhase("out"), 2300);
-    // Tell App.jsx we're done after fade-out completes
-    const doneTimer = setTimeout(() => onFinish(), 3100);
+    const timers = [];
 
-    return () => {
-      clearTimeout(holdTimer);
-      clearTimeout(outTimer);
-      clearTimeout(doneTimer);
-    };
+    timers.push(setTimeout(() => setPhase("hold"), HOLD_MS));
+
+    // Cycle through languages after hold
+    SUBTITLES.forEach((_, i) => {
+      if (i > 0) {
+        timers.push(setTimeout(() => setLangIndex(i), HOLD_MS + i * PER_LANG_MS));
+      }
+    });
+
+    const totalCycle = HOLD_MS + SUBTITLES.length * PER_LANG_MS;
+    timers.push(setTimeout(() => setPhase("out"), totalCycle));
+    timers.push(setTimeout(() => onFinish(), totalCycle + FADE_OUT_MS));
+
+    return () => timers.forEach(clearTimeout);
   }, [onFinish]);
 
   return (
     <div className={`splash ${phase}`}>
-      <h1 className="splash-logo">AIdentity</h1>
+      <div className="splash-content">
+        <h1 className="splash-logo">AIdentity</h1>
+        <p key={langIndex} className="splash-subtitle">
+          {SUBTITLES[langIndex]}
+        </p>
+      </div>
     </div>
   );
 }

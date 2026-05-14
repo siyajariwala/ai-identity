@@ -7,3 +7,6 @@ __pycache__/
 
 # Local vector DB (run rag/store.py to regenerate)
 rag/chroma_db/
+
+# MCP config contains API tokens
+.mcp.json

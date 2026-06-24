@@ -69,7 +69,7 @@ npm run dev
 | LLM | Groq API — llama-3.3-70b-versatile |
 | Speech-to-Text | Groq Whisper large-v3 |
 | Vector DB | ChromaDB |
-| RAG | LangChain + custom ingestion scripts |
+| RAG | ChromaDB rag  + custom ingestion scripts |
 
 ---
 
